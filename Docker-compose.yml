@@ -1,25 +1,39 @@
 services:
   frontend:
-    build:
-      context: ./frontend
+    build: ./frontend
+    container_name: frontend
     ports:
-      - "3000:3000"  # Map container's port 3000 to host's port 3000
+      - "3000:3000"
     volumes:
-      - ./frontend:/usr/src/app  # Ensure this maps to the correct local folder
+      - ./frontend:/usr/src/app
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /usr/src/app
+    command: ["live-server", "--port=3000", "--host=0.0.0.0", "--no-browser"]
     networks:
       - app-network
 
   backend:
-    build:
-      context: ./backend
+    build: ./backend
+    container_name: backend
     ports:
       - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
     volumes:
-      - ./backend:/app
+      - ./backend:/usr/src/app
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /usr/src/app
+    command: ["flask", "run", "--host=0.0.0.0", "--reload"]
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-

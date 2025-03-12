@@ -1,9 +1,12 @@
+import os
 from flask import Flask, request, jsonify
 import sqlite3
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
-DATABASE = 'database.db'
+
+DATABASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'database.db')
 
 def init_db():
     conn = sqlite3.connect(DATABASE)
@@ -17,6 +20,9 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Explicitly initialize DB here (guaranteed to run)
+init_db()
+
 @app.route('/messages', methods=['GET'])
 def get_messages():
     conn = sqlite3.connect(DATABASE)
@@ -24,7 +30,10 @@ def get_messages():
     cursor.execute('SELECT name, email, message FROM messages')
     messages = cursor.fetchall()
     conn.close()
-    return jsonify([{'name': msg[0], 'email': msg[1], 'message': msg[2]} for msg in messages])
+    return jsonify([
+        {'name': msg[0], 'email': msg[1], 'message': msg[2]}
+        for msg in messages
+    ])
 
 @app.route('/messages', methods=['POST'])
 def add_message():
@@ -40,5 +49,4 @@ def add_message():
     return jsonify({'message': 'Information added successfully!'})
 
 if __name__ == '__main__':
-    init_db()  # Initialize the database
     app.run(host='0.0.0.0', port=5000, debug=True)

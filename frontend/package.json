@@ -4,10 +4,12 @@
     "description": "A simple Node.js application.",
     "main": "app.js",
     "scripts": {
-      "start": "http-server -p 3000"
+        "start": "http-server -p 3000"
     },
     "dependencies": {
-      "http-server": "^14.1.1"
+        "http-server": "^14.1.1"
+    },
+    "devDependencies": {
+        "live-server": "^1.2.2"
     }
-  }
-  
+}
