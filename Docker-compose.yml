@@ -4,6 +4,7 @@ services:
     container_name: frontend
     ports:
       - "3000:3000"
+      - "35729:35729"  
     volumes:
       - ./frontend:/usr/src/app
     develop:
@@ -11,7 +12,7 @@ services:
         - action: sync
           path: ./frontend
           target: /usr/src/app
-    command: ["live-server", "--port=3000", "--host=0.0.0.0", "--no-browser"]
+    command: ["live-server", ".", "--port=3000", "--host=0.0.0.0", "--watch=.", "--no-browser"]
     networks:
       - app-network
 
